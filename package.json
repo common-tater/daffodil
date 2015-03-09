@@ -1,0 +1,16 @@
+{
+  "name": "daffodil",
+  "version": "1.0.0",
+  "description": "Scalable and resilient data broadcasting between peers",
+  "keywords": "datachannel peer binary flowering stream k-ary",
+  "devDependencies": {
+    "browserify": "^8.1.3",
+    "ecstatic": "^0.5.8"
+  },
+  "scripts": {
+    "example": "browserify example > example/build.js && node example/server.js"
+  },
+  "repository": "https://github.com/common-tater/daffodil",
+  "author": "Danny Bauman <dannybauman@gmail.com>",
+  "dependencies": {}
+}
