@@ -15,6 +15,10 @@ NodeCollection.prototype.addListenerNode = function (listener) {
   this.nodes[listener.id] = listener
 }
 
+NodeCollection.prototype.removeListenerNode = function (listenerId) {
+  delete this.nodes[listenerId]
+}
+
 NodeCollection.prototype.isFull = function () {
   var numNodes = Object.keys(this.nodes).length
   return numNodes >= K
