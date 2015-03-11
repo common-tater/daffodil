@@ -17,7 +17,6 @@ var peerCanvasCoords = {
   }
 }
 
-daffodil.addListener('0')
 drawMap()
 
 function onclick (evt) {
@@ -52,6 +51,7 @@ function clearMap () {
 }
 
 function drawMap () {
+  drawNode(peerNodes)
   for (var peerNodeId in peerNodes.downstreamPeers) {
     drawNode(peerNodes.downstreamPeers[peerNodeId])
   }
@@ -59,7 +59,11 @@ function drawMap () {
 
 function drawNode (peerNode) {
   var peerCanvasCoord = peerCanvasCoords[peerNode.id]
-  var upstreamPeerCanvasCoord = peerCanvasCoords[peerNode.upstreamPeer.id]
+  var upstreamPeerCanvasCoord = null
+  if (peerNode.upstreamPeer) {
+    upstreamPeerCanvasCoord = peerCanvasCoords[peerNode.upstreamPeer.id]
+  }
+
   if (!peerCanvasCoord) {
     return
   }
