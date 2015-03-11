@@ -11,7 +11,6 @@ function Daffodil (opts) {
   }
   this.broadcasterId = opts.broadcasterId
   this.k = opts.k
-  this.users = {}
   this.listeners = {}
 
   // the root will be the original broadcaster
