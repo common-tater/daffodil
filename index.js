@@ -23,6 +23,7 @@ Daffodil.prototype.addListener = function (listenerId) {
   this.listeners[listenerId] = new PeerNode(listenerId, peerNode)
   // add them to the peer with available slot's list
   peerNode.downstreamPeers[listenerId] = this.listeners[listenerId]
+  return this.listeners[listenerId]
 }
 
 Daffodil.prototype.removeListener = function (listenerId) {
