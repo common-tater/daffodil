@@ -14,7 +14,7 @@ function Daffodil (opts) {
   this.listeners = {}
 
   // the root will be the original broadcaster
-  this.root = new PeerNode(0, null)
+  this.root = new PeerNode(this.broadcasterId, null)
 }
 
 Daffodil.prototype.addListener = function (listenerId) {
