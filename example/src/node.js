@@ -41,7 +41,7 @@ Node.prototype.render = function () {
     ctx.lineTo(self.x * scale, self.y * scale)
     ctx.lineWidth = 4
     ctx.lineCap = 'round'
-    ctx.strokeStyle = 'rgba(204, 204, 204, 0.5)'
+    ctx.strokeStyle = 'rgba(104, 104, 104, 0.5)'
     ctx.stroke()
   }
 }
