@@ -2,7 +2,7 @@ var Daffodil = require('../')
 
 document.addEventListener('click', onclick.bind(this))
 
-var daffodil = new Daffodil({broadcasterId: '-1'})
+var daffodil = new Daffodil({broadcasterId: '0', k: 3})
 
 // draw the first node as the broadcaster
 drawNode(10, 10, '-1')
@@ -15,23 +15,23 @@ function onclick (evt) {
       break
     case 'nodeMap':
       var newListenerId = generateNewId()
-      var newListener = daffodil.joinAsListener(newListenerId)
-      drawNode.call(this, evt.pageX, evt.pageY, newListener)
+      daffodil.addListener(newListenerId)
+      drawNode.call(this, evt.pageX, evt.pageY, newListenerId)
       break
   }
 }
 
 function generateNewId () {
-  return Math.random().toString(36).substr(2, 9)
+  return Math.random().toString(36).substr(2, 4)
 }
 
-function drawNode (x, y, listener) {
+function drawNode (x, y, newListenerId) {
   var ctx = document.getElementById('nodeMap').getContext('2d')
 
   ctx.beginPath()
   ctx.arc(x, y, 10, 0, 2 * Math.PI)
   ctx.stroke()
 
-  ctx.font = "20px Georgia"
-  ctx.fillText(listener.id, x - 15, y - 15)
+  ctx.font = '20px Georgia'
+  ctx.fillText(newListenerId, x - 15, y - 15)
 }
