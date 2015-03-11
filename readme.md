@@ -7,6 +7,7 @@ When a broadcaster node becomes disconnected, it doesn't need to be resilient si
 
 ## Example
 `npm run example`
+
 The canvas starts out with a single root broadcaster node. Click on the canvas to add a new node to the tree. To remove a node, type its ID into the text box and click remove. As you add and remove nodes, it will visualize the re-routing of upstream/downstream connections beteen peers.
 
 ## Note

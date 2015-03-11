@@ -71,4 +71,9 @@ function findPeerWithAvailableSlot (currentNode, peerIdToBeAdded, peerIdToBeRemo
       return availablePeer
     }
   }
+
+  // if for any other reason no available peer was found, return null.
+  // it should never get to this state, and if so something else is out
+  // of whack
+  return null
 }

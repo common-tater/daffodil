@@ -10,7 +10,7 @@ function Graph (daffodil) {
   this.nodesEl = this.el.querySelector('.nodes')
   this.canvas = this.el.querySelector('canvas')
   this.context = this.canvas.getContext('2d')
-  this.nodes =  {}
+  this.nodes = {}
 
   this.root = new Node(this, this.daffodil.root)
   this.root.el.classList.add('root')
