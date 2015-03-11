@@ -35,8 +35,9 @@ Daffodil.prototype.removeListener = function (listenerId) {
   // downstream peers
   for (var downstreamPeerId in listenerNode.downstreamPeers) {
     var downstreamPeer = listenerNode.downstreamPeers[downstreamPeerId]
-    var peerWithAvailableSlot = findPeerWithAvailableSlot.call(this, this.root)
+    var peerWithAvailableSlot = findPeerWithAvailableSlot.call(this, this.root, downstreamPeer.id, listenerId)
     peerWithAvailableSlot.downstreamPeers[downstreamPeerId] = downstreamPeer
+    downstreamPeer.upstreamPeer = peerWithAvailableSlot
   }
   // remove the listener from it's upstream node
   delete listenerNode.upstreamPeer.downstreamPeers[listenerId]
@@ -45,8 +46,16 @@ Daffodil.prototype.removeListener = function (listenerId) {
   delete this.listeners[listenerId]
 }
 
-function findPeerWithAvailableSlot (currentNode) {
-  // if we're not full yet, return this one
+function findPeerWithAvailableSlot (currentNode, peerIdToBeAdded, peerIdToBeRemoved) {
+  // if this is part of a removal, the new routing can't involve either of the
+  // peers that are involved in the removal or adding, so just return null
+  if (currentNode.id === peerIdToBeAdded || currentNode.id === peerIdToBeRemoved) {
+    return null
+  }
+
+  // if we're not full yet, and if we're not in the process of
+  // removing a peer and in the situation of finding ourself,
+  // then return this one
   if (currentNode.getNumDownstreamPeers() < this.k) {
     return currentNode
   }
@@ -54,6 +63,11 @@ function findPeerWithAvailableSlot (currentNode) {
   // if we're full, go through this node's list of downstream peers
   // and check them for available slots
   for (var node in currentNode.downstreamPeers) {
-    return findPeerWithAvailableSlot.call(this, currentNode.downstreamPeers[node])
+    var availablePeer = findPeerWithAvailableSlot.call(this, currentNode.downstreamPeers[node], peerIdToBeAdded, peerIdToBeRemoved)
+    // if we found one that will do, return it, otherwise continue
+    // on iterating over the next downstream peer
+    if (availablePeer) {
+      return availablePeer
+    }
   }
 }
