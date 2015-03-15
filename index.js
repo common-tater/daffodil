@@ -10,7 +10,9 @@ function Daffodil (opts) {
     console.error('must include k as args')
   }
   // this should still work if the broadcasterId is
-  // not known yet, and is null at this point
+  // not known yet, and is null at this point. Daffodil
+  // must be able to build up its tree of listeners even
+  // before the broadcaster has connected
   this.broadcasterId = opts.broadcasterId
   this.k = opts.k
   this.listeners = {}
@@ -21,15 +23,22 @@ function Daffodil (opts) {
 
 Daffodil.prototype.setBroadcaster = function (broadcasterId) {
   var existingRoot = this.root
+  var newRoot = null
   if (!existingRoot.id) {
+    // if this is the first time there is a broadcaster
+    // being set, then just set the id on the blank node
+    // that was already created
     existingRoot.id = broadcasterId
   } else if (existingRoot.id === broadcasterId) {
     // if there is no change, just return
     return
   } else {
-    var newRoot = this.listeners[broadcasterId]
+    // if there is an existing broadcaster that is different
+    // than this new one, remove the existing one and replace
+    // it with the new
+    newRoot = this.listeners[broadcasterId]
     // if the new broadcaster is already a listener,
-    // remove from the list of listeners, remove the
+    // remove them from the list of listeners, remove the
     // link to its upstream peer, and the link from its
     // upstream peer to it
     if (newRoot) {
@@ -37,6 +46,8 @@ Daffodil.prototype.setBroadcaster = function (broadcasterId) {
       delete newRoot.upstreamPeer.downstreamPeers[broadcasterId]
       newRoot.upstreamPeer = null
     } else {
+      // if the caller is setting the broadcaster to be an id
+      // we haven't seen before, create a new node for them
       newRoot = new PeerNode(broadcasterId, null)
     }
 
