@@ -6,15 +6,49 @@ function Daffodil (opts) {
   if (!(this instanceof Daffodil)) {
     return new Daffodil(opts)
   }
-  if (!opts.broadcasterId || !opts.k) {
-    console.error('must include broadcasterId and k as args')
+  if (!opts.k) {
+    console.error('must include k as args')
   }
+  // this should still work if the broadcasterId is
+  // not known yet, and is null at this point
   this.broadcasterId = opts.broadcasterId
   this.k = opts.k
   this.listeners = {}
 
   // the root will be the original broadcaster
   this.root = new PeerNode(this.broadcasterId, null)
+}
+
+Daffodil.prototype.setBroadcaster = function (broadcasterId) {
+  var existingRoot = this.root
+  if (!existingRoot.id) {
+    existingRoot.id = broadcasterId
+  } else if (existingRoot.id === broadcasterId) {
+    // if there is no change, just return
+    return
+  } else {
+    var newRoot = this.listeners[broadcasterId]
+    // if the new broadcaster is already a listener,
+    // remove from the list of listeners, remove the
+    // link to its upstream peer, and the link from its
+    // upstream peer to it
+    if (newRoot) {
+      delete this.listeners[newRoot.id]
+      delete newRoot.upstreamPeer.downstreamPeers[broadcasterId]
+      newRoot.upstreamPeer = null
+    } else {
+      newRoot = new PeerNode(broadcasterId, null)
+    }
+
+    existingRoot.upstreamPeer = newRoot
+    newRoot.downstreamPeers[existingRoot.id] = existingRoot
+    // the existing root is now a listener,
+    // so now add them to the list of listeners
+    this.listeners[existingRoot.id] = existingRoot
+
+    this.root = newRoot
+  }
+  this.broadcasterId = broadcasterId
 }
 
 Daffodil.prototype.addListener = function (listenerId) {

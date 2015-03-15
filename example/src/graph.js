@@ -12,9 +12,7 @@ function Graph (daffodil) {
   this.context = this.canvas.getContext('2d')
   this.nodes = {}
 
-  this.root = new Node(this, this.daffodil.root)
-  this.root.el.classList.add('root')
-  this.nodes[this.root.id] = this.root
+  this.setRoot(new Node(this, this.daffodil.root))
 
   if (isRetina) {
     this.context.scale(2, 2)
@@ -33,8 +31,13 @@ Graph.prototype.render = function () {
   this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
   var root = this.root = this.nodes[this.daffodil.root.id]
-  root.x = this.width / 2
-  root.y = this.height / 2
+  // if this is the first time any root is being shown, set
+  // its x and y position to the center. If it's an existing
+  // root, it should already have those properties set
+  if (!root.x || !root.y) {
+    root.x = this.width / 2
+    root.y = this.height / 2
+  }
 
   for (var i in this.nodes) {
     var node = this.nodes[i]
@@ -57,6 +60,20 @@ Graph.prototype.add = function () {
 Graph.prototype.remove = function (node) {
   this.daffodil.removeListener(node.id)
   delete this.nodes[node.id]
+}
+
+Graph.prototype.setRoot = function (node) {
+  if (this.root && this.root !== node) {
+    this.root.el.classList.remove('root')
+  }
+
+  this.root = node
+  node.el.classList.add('root')
+  if (!this.nodes[node.id]) {
+    this.nodes[node.id] = node
+  }
+  this.daffodil.setBroadcaster(node.id)
+  this.render()
 }
 
 Graph.prototype._onclick = function (evt) {

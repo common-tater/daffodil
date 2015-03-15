@@ -4,6 +4,7 @@ var hyperglue = require('hyperglue2')
 var isRetina = window.devicePixelRatio > 1
 
 function Node (graph, peer) {
+  var self = this
   this.graph = graph
   this.peer = peer
 
@@ -15,6 +16,12 @@ function Node (graph, peer) {
 
   this.el = hyperglue('<div class="node"><div id="circle"></div><div id="label"></div></div>')
   this.el.querySelector('#circle').addEventListener('click', this.destroy.bind(this))
+  // on right-click, set the node as the new broadcaster
+  this.el.querySelector('#circle').addEventListener('contextmenu', function (evt) {
+    evt.preventDefault()
+    self.graph.setRoot(self)
+    return false
+  }, false)
 }
 
 Node.prototype.render = function () {
