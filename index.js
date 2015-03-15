@@ -23,42 +23,45 @@ function Daffodil (opts) {
 
 Daffodil.prototype.setBroadcaster = function (broadcasterId) {
   var existingRoot = this.root
-  var newRoot = null
+  // if this is the first time there is a broadcaster
+  // being set, then just set the id on the blank node
+  // that was already created and return
   if (!existingRoot.id) {
-    // if this is the first time there is a broadcaster
-    // being set, then just set the id on the blank node
-    // that was already created
     existingRoot.id = broadcasterId
-  } else if (existingRoot.id === broadcasterId) {
-    // if there is no change, just return
     return
-  } else {
-    // if there is an existing broadcaster that is different
-    // than this new one, remove the existing one and replace
-    // it with the new
-    newRoot = this.listeners[broadcasterId]
-    // if the new broadcaster is already a listener,
-    // remove them from the list of listeners, remove the
-    // link to its upstream peer, and the link from its
-    // upstream peer to it
-    if (newRoot) {
-      delete this.listeners[newRoot.id]
-      delete newRoot.upstreamPeer.downstreamPeers[broadcasterId]
-      newRoot.upstreamPeer = null
-    } else {
-      // if the caller is setting the broadcaster to be an id
-      // we haven't seen before, create a new node for them
-      newRoot = new PeerNode(broadcasterId, null)
-    }
-
-    existingRoot.upstreamPeer = newRoot
-    newRoot.downstreamPeers[existingRoot.id] = existingRoot
-    // the existing root is now a listener,
-    // so now add them to the list of listeners
-    this.listeners[existingRoot.id] = existingRoot
-
-    this.root = newRoot
   }
+
+  // if there is no change, just return
+  if (existingRoot.id === broadcasterId) {
+    return
+  }
+
+  // otherwise, there is an existing broadcaster that is different
+  // than this new one, so remove the existing one and replace
+  // it with the new
+  var newRoot = this.listeners[broadcasterId]
+  // if the new broadcaster is already a listener,
+  // remove them from the list of listeners, remove the
+  // link to its upstream peer, and the link from its
+  // upstream peer to it
+  if (newRoot) {
+    delete this.listeners[newRoot.id]
+    delete newRoot.upstreamPeer.downstreamPeers[broadcasterId]
+    newRoot.upstreamPeer = null
+  } else {
+    // if the caller is setting the broadcaster to be an id
+    // we haven't seen before, create a new node for them
+    newRoot = new PeerNode(broadcasterId, null)
+  }
+
+  existingRoot.upstreamPeer = newRoot
+  newRoot.downstreamPeers[existingRoot.id] = existingRoot
+  // the existing root is now a listener,
+  // so now add them to the list of listeners
+  this.listeners[existingRoot.id] = existingRoot
+
+  this.root = newRoot
+
   this.broadcasterId = broadcasterId
 }
 
