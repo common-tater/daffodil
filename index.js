@@ -2,6 +2,8 @@ var PeerNode = require('./peernode')
 
 module.exports = Daffodil
 
+var DEFAULT_ROOT_NODE_ID = 'DEFAULT_ROOT_NODE'
+
 function Daffodil (opts) {
   if (!(this instanceof Daffodil)) {
     return new Daffodil(opts)
@@ -13,7 +15,7 @@ function Daffodil (opts) {
   // not known yet, and is null at this point. Daffodil
   // must be able to build up its tree of listeners even
   // before the broadcaster has connected
-  this.broadcasterId = opts.broadcasterId
+  this.broadcasterId = opts.broadcasterId ? opts.broadcasterId : DEFAULT_ROOT_NODE_ID
   this.k = opts.k
   this.listeners = {}
 
@@ -26,7 +28,7 @@ Daffodil.prototype.setBroadcaster = function (broadcasterId) {
   // if this is the first time there is a broadcaster
   // being set, then just set the id on the blank node
   // that was already created and return
-  if (!existingRoot.id) {
+  if (existingRoot.id === DEFAULT_ROOT_NODE_ID) {
     existingRoot.id = broadcasterId
     return
   }
