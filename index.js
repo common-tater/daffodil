@@ -28,6 +28,7 @@ Daffodil.prototype.setBroadcaster = function (broadcasterId) {
   // that was already created and return
   if (!existingRoot.upstreamPeer) {
     existingRoot.id = broadcasterId
+    this.broadcasterId = broadcasterId
     return
   }
 
