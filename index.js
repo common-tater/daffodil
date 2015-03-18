@@ -23,17 +23,18 @@ function Daffodil (opts) {
 
 Daffodil.prototype.setBroadcaster = function (broadcasterId) {
   var existingRoot = this.root
+
+  // if there is no change, just return
+  if (existingRoot.id === broadcasterId) {
+    return
+  }
+
   // if this is the first time there is a broadcaster
   // being set, then just set the id on the blank node
   // that was already created and return
   if (!existingRoot.upstreamPeer) {
-    existingRoot.id = broadcasterId
     this.broadcasterId = broadcasterId
-    return
-  }
-
-  // if there is no change, just return
-  if (existingRoot.id === broadcasterId) {
+    existingRoot.id = broadcasterId
     return
   }
 
